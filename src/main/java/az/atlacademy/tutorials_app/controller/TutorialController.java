@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import az.atlacademy.tutorials_app.model.entity.TutorialEntity;
 import az.atlacademy.tutorials_app.service.TutorialService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tutorial")
@@ -28,6 +30,7 @@ public class TutorialController
     @GetMapping("/{id}")
     public ResponseEntity<TutorialEntity> getTutorialById(@PathVariable int id)
     {
+        log.info("GET /api/tutorial/{}", id);
         try
         {
             TutorialEntity entity = tutorialService.getTutorialById(id); 
@@ -42,7 +45,7 @@ public class TutorialController
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -50,6 +53,7 @@ public class TutorialController
     @PostMapping
     public ResponseEntity<TutorialEntity> createTutorial(@RequestBody TutorialEntity tutorial)
     {
+        log.info("POST /api/tutorial");
         try
         {
             TutorialEntity entity = tutorialService.createTutorial(tutorial); 
@@ -64,7 +68,7 @@ public class TutorialController
         } 
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -72,13 +76,14 @@ public class TutorialController
     @GetMapping
     public ResponseEntity<List<TutorialEntity>> getAllTutorials(@RequestParam(required = false) Boolean published)
     {
+        log.info("GET /api/tutorial");
         try
         {
             return ResponseEntity.ok(tutorialService.getAllTutorials(published)); 
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);  
         }
     }
@@ -86,6 +91,7 @@ public class TutorialController
     @PutMapping("/{id}")
     public ResponseEntity<TutorialEntity> updateTutorial(@RequestBody TutorialEntity tutorial, @PathVariable int id)
     {
+        log.info("PUT /api/tutorial/{}", id);
         try
         {
             tutorial.setId(id);
@@ -101,7 +107,7 @@ public class TutorialController
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -109,6 +115,7 @@ public class TutorialController
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTutorial(@PathVariable int id)
     {
+        log.info("DELETE /api/tutorial/{}", id);
         try
         {
             tutorialService.deleteTutorialById(id);
@@ -116,7 +123,7 @@ public class TutorialController
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -124,6 +131,7 @@ public class TutorialController
     @DeleteMapping
     public ResponseEntity<String> deleteAllTutorials()
     {
+        log.info("DELETE /api/tutorial");
         try
         {
             tutorialService.deleteAllTutorials();
@@ -131,7 +139,7 @@ public class TutorialController
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
