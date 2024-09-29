@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import az.atlacademy.tutorials_app.exception.TutorialNotFoundException;
 import az.atlacademy.tutorials_app.model.entity.TutorialEntity;
 import az.atlacademy.tutorials_app.repository.MyRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
+@Slf4j
 public class TutorialRepository implements MyRepository<TutorialEntity, Integer> 
 {
     private final JdbcTemplate jdbcTemplate;
@@ -49,7 +52,9 @@ public class TutorialRepository implements MyRepository<TutorialEntity, Integer>
         }
         catch(IndexOutOfBoundsException e)
         {
-            return null;
+            String message = "Tutorial not found with id : " + id; 
+            log.info(message);
+            throw new TutorialNotFoundException(message);
         }
     }
 

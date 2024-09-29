@@ -2,7 +2,6 @@ package az.atlacademy.tutorials_app.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import az.atlacademy.tutorials_app.model.dto.TutorialRequestDTO;
 import az.atlacademy.tutorials_app.model.dto.TutorialResponseDTO;
+import az.atlacademy.tutorials_app.model.response.SuccessResponse;
 import az.atlacademy.tutorials_app.service.TutorialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,118 +29,61 @@ public class TutorialController
     private final TutorialService tutorialService; 
 
     @GetMapping("/{id}")
-    public ResponseEntity<TutorialResponseDTO> getTutorialById(@PathVariable int id)
+    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> getTutorialById(@PathVariable int id)
     {
         log.info("GET /api/tutorial/{}", id);
-        try
-        {
-            TutorialResponseDTO dto = tutorialService.getTutorialById(id); 
-            if (dto == null) 
-            {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
-            }
-            else 
-            {
-                return ResponseEntity.ok(dto);
-            }
-        }
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        SuccessResponse<TutorialResponseDTO> response = tutorialService.getTutorialById(id); 
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .body(response); 
     }
 
     @PostMapping
-    public ResponseEntity<TutorialResponseDTO> createTutorial(@RequestBody TutorialRequestDTO tutorial)
+    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> createTutorial(@RequestBody TutorialRequestDTO tutorial)
     {
         log.info("POST /api/tutorial");
-        try
-        {
-            TutorialResponseDTO dto = tutorialService.createTutorial(tutorial); 
-            if (dto == null) 
-            {
-                return ResponseEntity.badRequest().body(null);     
-            }
-            else 
-            {
-                return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-            }
-        } 
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        SuccessResponse<TutorialResponseDTO> response = tutorialService.createTutorial(tutorial);
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<TutorialResponseDTO>> getAllTutorials(@RequestParam(required = false) Boolean published)
-    {
+    public ResponseEntity<SuccessResponse<List<TutorialResponseDTO>>> getAllTutorials(
+        @RequestParam(required = false) Boolean published
+    ){
         log.info("GET /api/tutorial");
-        try
-        {
-            return ResponseEntity.ok(tutorialService.getAllTutorials(published)); 
-        }
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);  
-        }
+        SuccessResponse<List<TutorialResponseDTO>> response = tutorialService.getAllTutorials(published); 
+        return ResponseEntity 
+                .status(response.getStatusCode())
+                .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TutorialResponseDTO> updateTutorial(@RequestBody TutorialRequestDTO tutorial, @PathVariable int id)
-    {
+    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> updateTutorial(
+        @RequestBody TutorialRequestDTO tutorial, 
+        @PathVariable int id
+    ){
         log.info("PUT /api/tutorial/{}", id);
-        try
-        {
-            TutorialResponseDTO updatedDTO = tutorialService.updateTutorial(tutorial, id);
-            if (updatedDTO == null) 
-            {
-                return ResponseEntity.badRequest().body(null);
-            }
-            else 
-            {
-                return ResponseEntity.ok(updatedDTO);
-            }
-        }
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        SuccessResponse<TutorialResponseDTO> response = tutorialService.updateTutorial(tutorial, id); 
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .body(response); 
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTutorial(@PathVariable int id)
     {
         log.info("DELETE /api/tutorial/{}", id);
-        try
-        {
-            tutorialService.deleteTutorialById(id);
-            return ResponseEntity.ok("Tutorial deleted successfully");
-        }
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        tutorialService.deleteTutorialById(id);
+        return ResponseEntity.ok("Tutorial deleted successfully");
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteAllTutorials()
     {
         log.info("DELETE /api/tutorial");
-        try
-        {
-            tutorialService.deleteAllTutorials();
-            return ResponseEntity.ok("All tutorials deleted successfully");
-        }
-        catch(Exception e)
-        {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        tutorialService.deleteAllTutorials();
+        return ResponseEntity.ok("All tutorials deleted successfully");
     }
 }
