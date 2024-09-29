@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import az.atlacademy.tutorials_app.model.entity.TutorialEntity;
+import az.atlacademy.tutorials_app.model.dto.TutorialRequestDTO;
+import az.atlacademy.tutorials_app.model.dto.TutorialResponseDTO;
 import az.atlacademy.tutorials_app.service.TutorialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,19 +29,19 @@ public class TutorialController
     private final TutorialService tutorialService; 
 
     @GetMapping("/{id}")
-    public ResponseEntity<TutorialEntity> getTutorialById(@PathVariable int id)
+    public ResponseEntity<TutorialResponseDTO> getTutorialById(@PathVariable int id)
     {
         log.info("GET /api/tutorial/{}", id);
         try
         {
-            TutorialEntity entity = tutorialService.getTutorialById(id); 
-            if (entity == null) 
+            TutorialResponseDTO dto = tutorialService.getTutorialById(id); 
+            if (dto == null) 
             {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
             }
             else 
             {
-                return ResponseEntity.ok(entity);
+                return ResponseEntity.ok(dto);
             }
         }
         catch(Exception e)
@@ -51,19 +52,19 @@ public class TutorialController
     }
 
     @PostMapping
-    public ResponseEntity<TutorialEntity> createTutorial(@RequestBody TutorialEntity tutorial)
+    public ResponseEntity<TutorialResponseDTO> createTutorial(@RequestBody TutorialRequestDTO tutorial)
     {
         log.info("POST /api/tutorial");
         try
         {
-            TutorialEntity entity = tutorialService.createTutorial(tutorial); 
-            if (entity == null) 
+            TutorialResponseDTO dto = tutorialService.createTutorial(tutorial); 
+            if (dto == null) 
             {
                 return ResponseEntity.badRequest().body(null);     
             }
             else 
             {
-                return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+                return ResponseEntity.status(HttpStatus.CREATED).body(dto);
             }
         } 
         catch(Exception e)
@@ -74,7 +75,7 @@ public class TutorialController
     }
 
     @GetMapping
-    public ResponseEntity<List<TutorialEntity>> getAllTutorials(@RequestParam(required = false) Boolean published)
+    public ResponseEntity<List<TutorialResponseDTO>> getAllTutorials(@RequestParam(required = false) Boolean published)
     {
         log.info("GET /api/tutorial");
         try
@@ -89,20 +90,19 @@ public class TutorialController
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TutorialEntity> updateTutorial(@RequestBody TutorialEntity tutorial, @PathVariable int id)
+    public ResponseEntity<TutorialResponseDTO> updateTutorial(@RequestBody TutorialRequestDTO tutorial, @PathVariable int id)
     {
         log.info("PUT /api/tutorial/{}", id);
         try
         {
-            tutorial.setId(id);
-            TutorialEntity updatedEntity = tutorialService.updateTutorial(tutorial, id);
-            if (updatedEntity == null) 
+            TutorialResponseDTO updatedDTO = tutorialService.updateTutorial(tutorial, id);
+            if (updatedDTO == null) 
             {
                 return ResponseEntity.badRequest().body(null);
             }
             else 
             {
-                return ResponseEntity.ok(updatedEntity);
+                return ResponseEntity.ok(updatedDTO);
             }
         }
         catch(Exception e)
