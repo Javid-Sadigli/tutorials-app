@@ -29,7 +29,7 @@ public class TutorialController
     private final TutorialService tutorialService; 
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> getTutorialById(@PathVariable int id)
+    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> getTutorialById(@PathVariable Long id)
     {
         log.info("GET /api/tutorial/{}", id);
         SuccessResponse<TutorialResponseDTO> response = tutorialService.getTutorialById(id); 
@@ -62,7 +62,7 @@ public class TutorialController
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<TutorialResponseDTO>> updateTutorial(
         @RequestBody TutorialRequestDTO tutorial, 
-        @PathVariable int id
+        @PathVariable Long id
     ){
         log.info("PUT /api/tutorial/{}", id);
         SuccessResponse<TutorialResponseDTO> response = tutorialService.updateTutorial(tutorial, id); 
@@ -72,7 +72,7 @@ public class TutorialController
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTutorial(@PathVariable int id)
+    public ResponseEntity<String> deleteTutorial(@PathVariable Long id)
     {
         log.info("DELETE /api/tutorial/{}", id);
         tutorialService.deleteTutorialById(id);

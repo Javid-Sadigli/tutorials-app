@@ -41,4 +41,11 @@ public class TutorialMapper
             return null;
         }
     }
+
+    public void convertRequestToEntity(TutorialRequestDTO dto, TutorialEntity entity)
+    {
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setPublished(dto.isPublished());
+    }
 }

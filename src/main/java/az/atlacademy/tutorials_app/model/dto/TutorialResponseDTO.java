@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 public class TutorialResponseDTO 
 {
-    private int id; 
+    private Long id; 
     private String title; 
     private String description; 
     private boolean published; 

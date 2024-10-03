@@ -6,12 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import az.atlacademy.tutorials_app.exception.TutorialNotFoundException;
 import az.atlacademy.tutorials_app.mapper.TutorialMapper;
 import az.atlacademy.tutorials_app.model.dto.TutorialRequestDTO;
 import az.atlacademy.tutorials_app.model.dto.TutorialResponseDTO;
 import az.atlacademy.tutorials_app.model.entity.TutorialEntity;
 import az.atlacademy.tutorials_app.model.response.SuccessResponse;
-import az.atlacademy.tutorials_app.repository.impl.TutorialRepository;
+import az.atlacademy.tutorials_app.repository.TutorialRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,9 +38,15 @@ public class TutorialService
                 .build();
     }
 
-    public SuccessResponse<TutorialResponseDTO> getTutorialById(int id)
+    public SuccessResponse<TutorialResponseDTO> getTutorialById(Long id)
     {
-        TutorialEntity entity = tutorialRepository.findById(id);
+        TutorialEntity entity = tutorialRepository.findById(id).orElseThrow(
+            () -> {
+                String message = "Tutorial not found with id : " + id; 
+                log.info(message);
+                return new TutorialNotFoundException(message);
+            }
+        );
         log.info("Found tutorial by id {} : {}", id, entity);
         TutorialResponseDTO dto = tutorialMapper.entityToResponseDTO(entity);
         return SuccessResponse
@@ -80,10 +87,16 @@ public class TutorialService
         }
     }
 
-    public SuccessResponse<TutorialResponseDTO> updateTutorial(TutorialRequestDTO tutorialDTO, int id)
+    public SuccessResponse<TutorialResponseDTO> updateTutorial(TutorialRequestDTO tutorialDTO, Long id)
     {
-        TutorialEntity tutorialEntity = tutorialMapper.requestDTOToEntity(tutorialDTO);
-        tutorialEntity.setId(id);
+        TutorialEntity tutorialEntity = tutorialRepository.findById(id).orElseThrow(
+            () -> {
+                String message = "Tutorial not found with id : " + id;
+                log.info(message);
+                return new TutorialNotFoundException(message);
+            }
+        );
+        this.tutorialMapper.convertRequestToEntity(tutorialDTO, tutorialEntity);
         tutorialEntity = tutorialRepository.save(tutorialEntity);
         log.info("Updated tutorial: {}", tutorialEntity);
         TutorialResponseDTO responseDTO = this.tutorialMapper.entityToResponseDTO(tutorialEntity); 
@@ -95,7 +108,7 @@ public class TutorialService
                 .build();
     }
 
-    public void deleteTutorialById(int id)
+    public void deleteTutorialById(Long id)
     {
         log.info("Deleting tutorial by id: {}", id);
         tutorialRepository.deleteById(id);

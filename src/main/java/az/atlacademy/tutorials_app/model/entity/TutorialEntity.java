@@ -1,30 +1,29 @@
 package az.atlacademy.tutorials_app.model.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Builder
+@Entity
+@Table(name = "tutorials")
 public class TutorialEntity 
 {
-    private int id; 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; 
+
     private String title; 
     private String description; 
     private boolean published; 
-
-    public TutorialEntity(String title, String description, boolean published)
-    {
-        this.title = title;
-        this.description = description;
-        this.published = published;
-    }
-    
 }
