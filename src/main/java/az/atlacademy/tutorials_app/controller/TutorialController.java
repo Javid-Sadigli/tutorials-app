@@ -3,6 +3,7 @@ package az.atlacademy.tutorials_app.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +18,12 @@ import az.atlacademy.tutorials_app.model.dto.TutorialRequestDTO;
 import az.atlacademy.tutorials_app.model.dto.TutorialResponseDTO;
 import az.atlacademy.tutorials_app.model.response.SuccessResponse;
 import az.atlacademy.tutorials_app.service.TutorialService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tutorial")
@@ -39,7 +42,7 @@ public class TutorialController
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> createTutorial(@RequestBody TutorialRequestDTO tutorial)
+    public ResponseEntity<SuccessResponse<TutorialResponseDTO>> createTutorial(@Valid @RequestBody TutorialRequestDTO tutorial)
     {
         log.info("POST /api/tutorial");
         SuccessResponse<TutorialResponseDTO> response = tutorialService.createTutorial(tutorial);
@@ -61,7 +64,7 @@ public class TutorialController
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<TutorialResponseDTO>> updateTutorial(
-        @RequestBody TutorialRequestDTO tutorial, 
+        @Valid @RequestBody TutorialRequestDTO tutorial, 
         @PathVariable Long id
     ){
         log.info("PUT /api/tutorial/{}", id);
