@@ -6,11 +6,18 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
          
 
-    <!-- Added new column to tutorials : price -->
+    <!-- Create table student -->
     <changeSet id="1" author="Javid Sadigli">
-        <addColumn tableName="tutorials">
-            <column name="price" type="double"/>
-        </addColumn>
+        <createTable tableName="tutorials">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="title" type="varchar(255)"></column>
+            <column name="description" type="varchar(255)"></column>
+            <column name="published" type="boolean"></column>
+        </createTable>
+
+        <addAutoIncrement tableName="tutorials" columnName="id" />
     </changeSet>
 
 
