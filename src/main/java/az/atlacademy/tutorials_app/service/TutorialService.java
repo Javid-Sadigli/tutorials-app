@@ -3,6 +3,7 @@ package az.atlacademy.tutorials_app.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class TutorialService
 {
     private final TutorialRepository tutorialRepository; 
     private final TutorialMapper tutorialMapper; 
+    private final RedisTemplate<Long, TutorialResponseDTO> redisTemplate; 
 
     public SuccessResponse<TutorialResponseDTO> createTutorial(TutorialRequestDTO tutorialDTO)
     {
@@ -30,6 +32,8 @@ public class TutorialService
         entity = tutorialRepository.save(entity);
         log.info("Created tutorial: {}", entity);
         TutorialResponseDTO responseDTO = tutorialMapper.entityToResponseDTO(entity);
+        redisTemplate.opsForValue().set(entity.getId(), responseDTO);
+        
         return SuccessResponse
                 .<TutorialResponseDTO>builder()
                 .body(responseDTO)
@@ -40,15 +44,21 @@ public class TutorialService
 
     public SuccessResponse<TutorialResponseDTO> getTutorialById(Long id)
     {
-        TutorialEntity entity = tutorialRepository.findById(id).orElseThrow(
-            () -> {
-                String message = "Tutorial not found with id : " + id; 
-                log.info(message);
-                return new TutorialNotFoundException(message);
-            }
-        );
-        log.info("Found tutorial by id {} : {}", id, entity);
-        TutorialResponseDTO dto = tutorialMapper.entityToResponseDTO(entity);
+        TutorialResponseDTO dto = redisTemplate.opsForValue().get(id); 
+
+        if (dto == null) 
+        {
+            TutorialEntity entity = tutorialRepository.findById(id).orElseThrow(
+                () -> {
+                    String message = "Tutorial not found with id : " + id; 
+                    log.info(message);
+                    return new TutorialNotFoundException(message);
+                }
+            );
+            dto = tutorialMapper.entityToResponseDTO(entity);
+        }
+
+        log.info("Found tutorial by id {} : {}", id, dto);
         return SuccessResponse
                 .<TutorialResponseDTO>builder()
                 .body(dto)
@@ -100,6 +110,7 @@ public class TutorialService
         tutorialEntity = tutorialRepository.save(tutorialEntity);
         log.info("Updated tutorial: {}", tutorialEntity);
         TutorialResponseDTO responseDTO = this.tutorialMapper.entityToResponseDTO(tutorialEntity); 
+        redisTemplate.opsForValue().set(id, responseDTO);
         return SuccessResponse
                 .<TutorialResponseDTO>builder()
                 .body(responseDTO)
@@ -112,11 +123,18 @@ public class TutorialService
     {
         log.info("Deleting tutorial by id: {}", id);
         tutorialRepository.deleteById(id);
+        redisTemplate.delete(id);
     }
 
     public void deleteAllTutorials()
     {
         log.info("Deleting all tutorials");
+        redisTemplate.delete(
+            this.getAllTutorials(null)
+                .getBody()
+                    .stream()
+                    .map((tutorialResponse) -> tutorialResponse.getId())
+                    .collect(Collectors.toSet())); 
         tutorialRepository.deleteAll();
     }
 }

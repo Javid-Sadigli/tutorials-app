@@ -15,16 +15,12 @@ services:
   redis:
     image: redis:7.0
     container_name: redisdb
-    environment:
-      - REDIS_USERNAME=redis-testusername
-      - REDIS_PASSWORD=redis-testpassword
     ports:
       - "6379:6379"
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--masterauth", "${REDIS_PASSWORD}"]
+    command: ["redis-server", "--requirepass", "redis-testpassword"]
     volumes:
       - redis-data:/data
 
 volumes:
   postgres_data:
   redis-data:
-    driver: local
