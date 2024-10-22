@@ -56,6 +56,7 @@ public class TutorialService
                 }
             );
             dto = tutorialMapper.entityToResponseDTO(entity);
+            redisTemplate.opsForValue().set(id, dto);
         }
 
         log.info("Found tutorial by id {} : {}", id, dto);
