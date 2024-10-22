@@ -1,5 +1,6 @@
 package az.atlacademy.tutorials_app.model.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,4 +27,7 @@ public class TutorialRequestDTO
     private String description; 
     
     private boolean published; 
+
+    @Max(value = 100, message = "The price of the tutorial can not be greater than 100$.")
+    private double price; 
 }

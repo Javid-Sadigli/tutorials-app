@@ -19,4 +19,5 @@ public class TutorialResponseDTO
     private String title; 
     private String description; 
     private boolean published; 
+    private double price;
 }
